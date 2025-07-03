@@ -1,16 +1,30 @@
 import express from "express";
-// import pool from "../database/db.js";
-import sql from "../database/db.js";
+import ConnectDB from "../database/db.js";
+import verifyToken from "../middleware/verify.jwt.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  return res.status(200).send("This is home page");
+  return res.status(200).send("This is TEST page");
 });
 
-router.get("/test", async (req, res) => {
-  const result = await sql`select 1 as 'one';`;
-  console.log(result);
-  return res.status(200).send(result);
+router.get("/showAll", async (req, res) => {
+  const db = await ConnectDB();
+  const result = await db.from("test").select("*");
+  const { data, error } = result;
+  return res.status(200).json(data);
 });
+
+router.get("/new", async (req, res) => {
+  const db = await ConnectDB();
+  const newRow = await db
+    .from("test")
+    .insert({ name: "N", description: "That One" });
+  return res.status(201).json(newRow);
+});
+
+router.get("/protected", verifyToken, async (req, res) => {
+  res.status(200).send("Protected route");
+});
+
 export default router;

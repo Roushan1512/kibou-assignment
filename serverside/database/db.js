@@ -1,30 +1,17 @@
-// import pkg from "pg";
+import { createClient } from "@supabase/supabase-js";
 
-// const { Pool } = pkg;
+const ConnectDB = async () => {
+  try {
+    const supabase = await createClient(
+      process.env.SupaURL,
+      process.env.SupaServiceKey
+    );
+    console.log("DB Connected");
+    return supabase;
+  } catch (error) {
+    console.log("Supabase Not Connected");
+    ProcessingInstruction.exit(1);
+  }
+};
 
-// const pool = new Pool({
-//   user: process.env.USER,
-//   host: process.env.HOST,
-//   database: process.env.DBNAME,
-//   password: process.env.DBPASS,
-//   port: process.env.DBPORT,
-// });
-
-// pool.on("connect", () => {
-//   console.log("Connected to Supabase");
-// });
-
-// export default pool;
-
-import postgres from "postgres";
-
-const sql = postgres({
-  user: process.env.USER,
-  host: process.env.HOST,
-  database: process.env.DBNAME,
-  password: process.env.DBPASS,
-  port: process.env.DBPORT,
-  ssl: false,
-});
-
-export default sql;
+export default ConnectDB;
