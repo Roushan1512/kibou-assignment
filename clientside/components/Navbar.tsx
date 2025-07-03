@@ -18,9 +18,12 @@ const Navbar = () => {
     <div className="fixed top-0 h-[10vh] w-full flex justify-center items-center border-b-white border-b-2 z-10">
       <div className="h-full w-1/3 flex justify-start items-center gap-8 pl-4">
         <Link href="/">Home</Link>
-        <Link href="/create">Create</Link>
         {userId != null && userName != null ? (
-          <Link href="/profile">Dashboard</Link>
+          <>
+            <Link href="/create">Create</Link>
+
+            <Link href="/profile">Dashboard</Link>
+          </>
         ) : null}
       </div>
       <div className="h-full w-1/3 flex justify-center items-center">

@@ -1,21 +1,22 @@
 import express from "express";
 import ConnectDB from "../database/db.js";
 import { createHash } from "crypto";
+import verifyToken from "../middleware/verify.jwt.js";
 
 const router = express.Router();
 
-router.post("/newTender", async (req, res) => {
-  const { title, description, deadline, budget, companyName } = await req.body;
+router.post("/newTender", verifyToken, async (req, res) => {
+  const { title, description, deadline, budget, userId } = await req.body;
   const db = await ConnectDB();
-  const companyFound = await db
-    .from("companies")
+  const userFound = await db
+    .from("users")
     .select("*")
-    .eq("companyName", companyName)
+    .eq("userId", userId)
     .limit(1);
-  if (companyFound.data.length == 0) {
-    return res.status(404).json({ message: "Company Not Found" });
+  if (userFound.data.length == 0) {
+    return res.status(404).json({ message: "User Not Found, Please Login" });
   }
-  const companyId = companyFound.data[0].companyId;
+  const companyId = userFound.data[0].companyId;
   const tenderId = createHash("sha256")
     .update(companyId + title)
     .digest("hex")
@@ -27,6 +28,7 @@ router.post("/newTender", async (req, res) => {
     deadline: deadline,
     budget: budget,
     companyId: companyId,
+    userId: userId,
   });
   return res.status(201).json({ message: "Tender Added", tenderAdded });
 });
