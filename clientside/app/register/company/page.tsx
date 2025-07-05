@@ -5,6 +5,7 @@ import React from "react";
 const Company = () => {
   const [companyName, setCompanyName] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const [file, setFile] = React.useState<any>(null);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -25,6 +26,18 @@ const Company = () => {
       }
     }
   };
+
+  const handleUpload = async () => {
+    const formData = new FormData();
+    formData.append("avatar", file); // "avatar" matches Express field name
+
+    const res = await axios.post("/api/upload-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
+
   return (
     <div>
       <div className="w-full h-[90vh] flex justify-center items-center">
@@ -54,6 +67,23 @@ const Company = () => {
             >
               Create Company
             </button>
+            {/* <>
+              <input
+                type="file"
+                className="cursor-pointer"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setFile(e.target.files[0]);
+                  }
+                }}
+              />
+              <label
+                htmlFor="file-upload"
+                className="w-fit text-blue-500 p-2 rounded-md px-6"
+              >
+                Upload Avatar
+              </label>
+            </> */}
           </form>
         </div>
       </div>

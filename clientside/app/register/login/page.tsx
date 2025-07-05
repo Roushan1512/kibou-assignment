@@ -23,6 +23,7 @@ const Login = () => {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("userId", res.data.userId);
           localStorage.setItem("userName", res.data.userName);
+          localStorage.setItem("companyId", res.data.companyId);
         });
     } catch (error: any) {
       if (error.response?.status == 401 || error.response?.status == 409) {

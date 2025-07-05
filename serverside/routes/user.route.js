@@ -45,6 +45,7 @@ router.post("/newUser", async (req, res) => {
       token: jwt_token,
       userId: userId,
       userName: username,
+      companyId: company.data[0].companyId,
     });
   }
 });
@@ -63,11 +64,16 @@ router.post("/userLogin", async (req, res) => {
     console.log(userPass, userExists);
     if (userPass == password) {
       const jwt_token = jwt.sign({ userId: userId }, process.env.JWT_Secret);
+      const company = await db
+        .from("companies")
+        .select("companyName,users(companyId)")
+        .eq("companyId", userExists.data[0].companyId);
       return res.status(200).json({
         userId: userId,
         userName: userExists.data[0].userName,
         token: jwt_token,
         message: "Logged in Successfully",
+        companyId: userExists.data[0].companyId,
       });
     } else {
       return res.status(401).json({ message: "Wrong Password, Try again" });

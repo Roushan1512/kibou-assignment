@@ -1,8 +1,10 @@
 import express from "express";
 import ConnectDB from "../database/db.js";
 import { createHash } from "crypto";
+import multer from "multer";
 
 const router = express.Router();
+const upload = multer();
 
 router.get("/showAll", async (req, res) => {
   try {
@@ -14,7 +16,7 @@ router.get("/showAll", async (req, res) => {
   }
 });
 
-router.post("/newCompany", async (req, res) => {
+router.post("/newCompany", upload.single("avatar"), async (req, res) => {
   const { companyName, description } = await req.body;
   const companyId = createHash("sha256")
     .update(companyName)
@@ -38,6 +40,16 @@ router.post("/newCompany", async (req, res) => {
       companyName: companyName,
     });
   }
+});
+
+router.get("/getCompDetails", async (req, res) => {
+  const { companyId } = req.query;
+  const db = await ConnectDB();
+  const company = await db
+    .from("companies")
+    .select("*")
+    .eq("companyId", companyId);
+  return res.status(200).json(company.data[0]);
 });
 
 export default router;
